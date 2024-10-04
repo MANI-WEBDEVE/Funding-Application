@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         <Navbar />
         
-          <div className="min-h-[73vh] ">
+          <div className="min-h-[75vh] ">
             {children}
           </div>
         

@@ -7,16 +7,16 @@ const Footer = () => {
      
       <div className="flex space-x-6 mt-2">
         <a href="https://twitter.com/givemeachai" target="_blank" rel="noopener noreferrer">
-          <TwitterIcon className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+          <TwitterIcon className="w-6 h-6 dark:text-black" />
         </a>
         <a href="https://www.facebook.com/givemeachai" target="_blank" rel="noopener noreferrer">
-          <FacebookIcon className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+          <FacebookIcon className="w-6 h-6 dark:text-black" />
         </a>
         <a href="https://www.instagram.com/givemeachai/" target="_blank" rel="noopener noreferrer">
-          <InstagramIcon className="w-6 h-6 text-pink-500 dark:text-pink-400" />
+          <InstagramIcon className="w-6 h-6 dark:text-black" />
         </a>
       </div>
-      <p className="text-xs font-light mt-4">Copyright © 2022 Give Me a Chai. All rights reserved.</p>
+      <p className="text-sm  mt-4">Copyright © 2022 Give Me a Chai. All rights reserved.</p>
     </footer>
   )
 }

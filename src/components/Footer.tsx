@@ -3,9 +3,9 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <footer className="flex flex-col items-center justify-center w-full h-14 border-t dark:border-gray-600 p-4">
+    <footer className="flex flex-col items-center justify-center w-full h-[4.1rem] border-t dark:border-gray-600 p-4 ">
      
-      <div className="flex space-x-6 mt-4">
+      <div className="flex space-x-6 mt-2">
         <a href="https://twitter.com/givemeachai" target="_blank" rel="noopener noreferrer">
           <TwitterIcon className="w-6 h-6 text-blue-500 dark:text-blue-400" />
         </a>

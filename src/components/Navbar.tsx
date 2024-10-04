@@ -4,19 +4,19 @@ import React from 'react'
 
 const Navbar = () => {
     return (
-        <nav className='bg-black p-5 flex justify-between items-center '>
+        <nav className=' p-5 flex justify-between items-center text-black mx-auto'>
             <div className='text-3xl font-bold'>
-                <img src="src\app\public\logo.png" alt="" /> CHAI
+              CHAI
             </div>
-            <ul className='flex gap-6 '>
-                <li><Link href="/">Home</Link></li>
-                <li><Link href="/about">About</Link></li>
-                <li><Link href="/contact">Contact</Link></li>
-                <li><Link href="/signup">SignUp</Link></li>
-                <li><Link href="/login">Login</Link></li>
+            <ul className='flex gap-6 font-semibold m-2  h-6'>
+                <li className='hover:border-black transition-all ease-in-out duration-300  hover:border-b-2 ' ><Link href="/">Home</Link></li>
+                <li className='hover:border-black transition-all ease-in-out duration-300  hover:border-b-2 '><Link href="/about">About</Link></li>
+                <li className='hover:border-black transition-all ease-in-out duration-300  hover:border-b-2 '><Link href="/contact">Contact</Link></li>
+                <li className='hover:border-black transition-all ease-in-out duration-300  hover:border-b-2 '><Link href="/signup">SignUp</Link></li>
+                <li className='hover:border-black transition-all ease-in-out duration-300  hover:border-b-2 '><Link href="/login">Login</Link></li>
             </ul>
         </nav>
-    )
+    ) 
 }
 
 export default Navbar

@@ -1,8 +1,18 @@
-import Image from 'next/image'
+"use client"
 import Link from 'next/link'
 import React from 'react'
+import { useSession, signIn, signOut } from "next-auth/react";
 
 const Navbar = () => {
+    const { data: session } = useSession()
+    if (session) {
+      return (
+        <>
+          Signed in as {session.user?.email} <br />
+          <button onClick={() => signOut()}>Sign out</button>
+        </>
+      );
+    }
     return (
         <>
             <nav className=' p-5 flex justify-between items-center text-black mx-auto '>

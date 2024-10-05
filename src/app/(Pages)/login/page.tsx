@@ -5,21 +5,26 @@ import { BsTwitterX } from "react-icons/bs";
 import { FaGithub } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { useSession, signIn, signOut } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const page = () => {
     const { data: session } = useSession()
   if (session) {
-    return (
-      <>
-        Signed in as {session.user?.email} <br />
-        <button onClick={() => signOut()}>Sign out</button>
-      </>
-    );
+    const router = useRouter();
+    router.push('/dashboard')
   }
   return (
     <>
       <div className="bg-red- py-16 container mx-auto ">
-        <h2 className="text-4xl font-bold uppercase text-center ">
+       {session ? <>
+       <h2 className="text-4xl font-bold uppercase text-center mt-8 ">Thank`s For Login CHAI</h2>
+       <div className="flex   items-center justify-center mt-8   ">
+        <Link href={"/dashboard"}>
+        <button className="text-white bg-black   font-medium rounded-lg  text-md px-4 py-2 text-center inline-flex items-center gap-2   mb-2">Dashboard</button>
+        </Link>
+       </div>
+       </> :<> <h2 className="text-4xl font-bold uppercase text-center ">
           Let Connect <span className="font-extrabold">CHAI</span> Fans
         </h2>
         <div className="flex gap-4 flex-col items-center justify-center mt-8    ">
@@ -52,7 +57,7 @@ const page = () => {
             <FcGoogle className="w-6 h-6" />
             Sign in with Google
           </button>
-        </div>
+        </div></>}
       </div>
     </>
   );

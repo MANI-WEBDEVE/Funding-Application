@@ -1,7 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import React from "react";
-
+import { FaRegUserCircle } from "react-icons/fa";
 const page = ({ params }: { params: { username: string } }): JSX.Element => {
   const users = [
     { username: "johnDoe", id: 1, payment: 1000 },
@@ -37,19 +39,47 @@ const page = ({ params }: { params: { username: string } }): JSX.Element => {
         <div className="text-sm text-gray-600">
           9000 members . 200 posts . $15,430/release
         </div>
-      </div>
-      <div className=" flex justify-center items-center gap-4 text-black w-[80%]">
-        <div className="listUser bg-slate-100 p-4">
+      <div className=" flex gap-4 text-black w-[80%] mt-6 ">
+        <div className="suppoter  w-1/2 p-10">
+        <h1 className="text-2xl font-bold py-4 uppercase">Suppoters </h1>
           <ul>
             {users.map((items) => (
-             <li key={items.id}>{items.username} <span>{items.payment}</span></li>
+
+              <>
+              <div key={items.id}  className="flex items-center justify-between">
+                <div>
+                  <li className="py-4 flex gap-2 items-center" key={items.id}><FaRegUserCircle className="w-6 h-6"/> {items.username} </li>
+                </div>
+                <div>{items.payment}</div>
+              </div>
+                <div className="border-b border-black"></div>
+              </>
+             
             ))}
           </ul>
         </div>
-        <div className="bg-red-900"></div>
+        <div className=" w-1/2 p-10">
+          <h1 className="text-2xl uppercase font-bold py-4">Make a Payment</h1>
+          <div className="flex flex-col gap-3">
+            {/* create a three input filed first payment amount second username third email and then make a Button */}
+            <Input type="text" placeholder="Amount" className="p-3 rounded-md" />
+            <Input type="text" placeholder="Username" className="p-3 rounded-md" />
+            <Input type="text" placeholder="Email" className="p-3 rounded-md" />
+            <Button className="text-white bg-black hover:bg-slate-800 p-3 rounded-md shadow-xl font-bold">Make a Payment</Button>
+          </div>
+          {/* choose for this amount create a button */}
+          <div className="flex  gap-3 mt-4">
+            <Button className="text-white bg-black hover:bg-slate-800 p-3 rounded-md shadow-xl font-bold px-4 py-2">10$</Button>
+            <Button className="text-white bg-black hover:bg-slate-800 p-3 rounded-md shadow-xl font-bold px-4 py-2">20$</Button>
+            <Button className="text-white bg-black hover:bg-slate-800 p-3 rounded-md shadow-xl font-bold px-4 py-2">30$</Button>
+          </div>
+
+        </div>
+      </div>
       </div>
     </>
   );
 };
 
 export default page;
+{/* <FaRegUserCircle /> */}

@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Model } from "mongoose";
+import mongoose, { Schema, model,Model } from "mongoose";
 
 interface UsersData {
   name: string;
@@ -11,39 +11,40 @@ interface UsersData {
 }
 
 const UserSchema = new Schema<UsersData>({
-  name: {
-    type: String,
-    
-  },
-  username: {
-    type: String,
-    required: true, // Consider making this required if unique
-    unique: true,   // Ensure usernames are unique
-  },
-  email: {
-    type: String,
-    required: true, // Email should likely be required
-    unique: true,   // Ensure emails are unique
-  },
-  publicPicture: {
-    type: String,
-   
-  },
-  coverPicture: {
-    type: String,
+    name: {
+      type: String,
+      required: false, // Optional now
+      default: "Anonymous", // Default value if missing
+    },
+    username: {
+      type: String,
+      required: true,  // Consider making this required
+    },
+    email: {
+      type: String,
+      required: true,  // Email should be required
+      unique: true,
+    },
+    publicPicture: {
+      type: String,
+      required: false,
+    },
+    coverPicture: {
+      type: String,
+      required: false,
+    },
+    stripeId: {
+      type: String,
+      required: false, // Optional, default to empty string if not available
+      default: "",
+    },
+    stripeSecret: {
+      type: String,
+      required: false, // Optional, default to empty string if not available
+      default: "",
+    },
+  });
   
-  },
-  stripeId: {
-    type: String,
-   
-  },
-  stripeSecret: {
-    type: String,
-  
-  },
-});
-
-// Compile the User model
 const User =
   (mongoose.models.User as mongoose.Model<UsersData>) ||
   mongoose.model<UsersData>("User", UserSchema);

@@ -1,52 +1,76 @@
-import mongoose from 'mongoose';
-import NextAuth from 'next-auth'
+import mongoose from "mongoose";
+import NextAuth, { Session, User } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
-import User from '@/models/User';
- const nextAuth = NextAuth({
+import Users from "@/models/User";
+import dbConnect from "@/DB/connectdb";
+
+const nextAuth = NextAuth({
   providers: [
-    // OAuth authentication providers
     GitHubProvider({
-        clientId: process.env.GITHUB_ID as string,
-        clientSecret: process.env.GITHUB_SECRET as string
-      })
+      clientId: process.env.GITHUB_ID as string,
+      clientSecret: process.env.GITHUB_SECRET as string,
+    }),
   ],
- 
- 
-callbacks: {
-  async signIn({ user, account, profile, email, credentials }) {
-      if (account?.provider === "github") {
-        const client =  await mongoose.connect(process.env.MONGODB_URL as string);
-        console.log("connect to Database⚙")
-        const currentUser = await User.findOne({ email: email })
-        console.log(currentUser)
-        if (!currentUser) {
-          const newUser = new User({
-            email: user.email,
-            username: user.email?.split('@')[0]
-          })
-          await newUser.save()
-          console.log(newUser)
-          user.name = newUser.username;
-        
-        } else {
-          user.name = currentUser.username
-          
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }: any): Promise<any> {
+      try {
+        // Check if provider is GitHub
+        if (account?.provider === "github") {
+          await dbConnect(); // Connect to DB
+
+          // Find user by email
+          const existingUser = await Users.findOne({ email: user.email });
+
+          // If user doesn't exist, create new user
+          if (!existingUser) {
+            await Users.create({
+              email: user.email,
+              username: user.email?.split("@")[0], // Set username from email
+              publicPicture: user.image,
+            });
+          }
+
+          return true; // Allow sign in
+        }
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
+        return false; // Deny sign-in if there's an error
+      }
+    },
+
+    // Session callback
+    async session({ session, token }: { session: Session; token: any }): Promise<Session> {
+      try {
+        await dbConnect(); // Ensure DB is connected
+
+        // Validate session email exists
+        if (!session.user?.email) {
+          throw new Error("Session does not have an email.");
         }
 
+        // Find user by email
+        const dbUser = await Users.findOne({ email: session.user.email });
+
+        if (dbUser) {
+          // Attach additional data to session
+          (session.user as any).name = dbUser.username; // Set username from DB
+          (session.user as any).id = dbUser._id; // Optionally set user ID
+
+          // Optional: Add any other fields you want to persist in the session
+          (session as any).user.picture = dbUser.publicPicture; // Example for user's image
+        } else {
+          throw new Error("User not found in the database.");
+        }
+
+        return session; // Return modified session
+      } catch (error) {
+        console.error("Error in session callback:", error);
+        return session; // Return unmodified session in case of error
       }
-      return true
+    },
   },
-  // async jwt({ token, user, account, profile, isNewUser }) {
-  //   if (user) {
-  //     token.id = user.id
-  //     token.email = user.email
-  //     token.name = user.name
-  //   }
-  //   console.log(token)
-  //   return token
-  // },
-}
 
-})
+  // Additional configuration options can go here if needed
+});
 
-export { nextAuth as GET, nextAuth as POST }
+export { nextAuth as GET, nextAuth as POST };

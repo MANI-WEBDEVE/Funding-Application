@@ -13,15 +13,18 @@ import {
 import { Button } from "./ui/button";
 
 const Navbar = () => {
-  const { data: session } = useSession();
-  // if (session) {
-  //   return (
-  //     <>
-  //       Signed in as {session.user?.email} <br />
-  //       <button onClick={() => signOut()}>Sign out</button>
-  //     </>
-  //   );
-  // }
+  const { data: session, status } = useSession();
+
+if (status === "loading") {
+  return <p>Loading...</p>;
+}
+
+if (session) {
+  console.log(session.user?.name); // Should show the username
+  console.log(session.user?.email); // Should show the email
+} else {
+  console.log("No session found");
+}
   return (
     <>
       <nav className=" p-5 flex justify-between items-center text-black mx-auto ">
@@ -62,7 +65,7 @@ const Navbar = () => {
                             <Link href={"/dashboard"}>DashBoard</Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem>
-                            {session.user?.email}
+                            <Link href={`/${session.user?.name}`}>Your Profile</Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Button onClick={() => signOut()}>Logout</Button>

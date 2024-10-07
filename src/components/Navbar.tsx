@@ -14,21 +14,12 @@ import { Button } from "./ui/button";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
-
-if (status === "loading") {
-  return <p>Loading...</p>;
-}
-
-if (session) {
-  console.log(session.user?.name); // Should show the username
-  console.log(session.user?.email); // Should show the email
-} else {
-  console.log("No session found");
-}
   return (
     <>
       <nav className=" p-5 flex justify-between items-center text-black mx-auto ">
-        <div className="text-3xl font-bold"><Link href={'/'}>CHAI</Link></div>
+        <div className="text-3xl font-bold">
+          <Link href={"/"}>CHAI</Link>
+        </div>
         <div className="flex items-center justify-end w-full ">
           <ul className="flex  gap-6 font-semibold mr-7  h-6">
             <li className="hover:border-black transition-all ease-in-out duration-300  hover:border-b-2 ">
@@ -64,8 +55,13 @@ if (session) {
                           <DropdownMenuItem>
                             <Link href={"/dashboard"}>DashBoard</Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Link href={`/${session.user?.name}`}>Your Profile</Link>
+                          <DropdownMenuItem className="flex items-center justify-between">
+                            <Link href={`/${session.user?.name}`}>
+                              <span className="font-bold uppercase border-[1px] rounded-full py-1 px-2 text-center mx-2  border-black ">
+                                {session.user.name?.split("")[0]}{" "}
+                              </span>
+                            </Link>
+                            <div>Your Page</div>
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Button onClick={() => signOut()}>Logout</Button>
@@ -77,8 +73,8 @@ if (session) {
                 ) : (
                   <>
                     <div className="px-3 rounded-full  ">
-                      <DropdownMenu >
-                        <DropdownMenuTrigger >
+                      <DropdownMenu>
+                        <DropdownMenuTrigger>
                           <p>{session.user?.name?.charAt(0).toUpperCase()}</p>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>

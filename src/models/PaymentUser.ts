@@ -1,6 +1,6 @@
-import mongoose, { Schema, model, models, Model } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
-interface PaymentUser {
+export interface PaymentUser extends Document {
   name: string;
   to_username: string;
   order_id: string;
@@ -10,30 +10,31 @@ interface PaymentUser {
   done: boolean;
 }
 
-const PaymentUser = new Schema<PaymentUser>({
+const PaymentUserSchema = new Schema<PaymentUser>({
   name: {
     type: String,
-    required: true,
   },
   to_username: {
     type: String,
-    required: true,
   },
-  order_id: {
+  order_id: { 
     type: String,
-    required: true,
   },
   message: {
-    type:String
+    type: String,
   },
   amount: {
     type: Number,
-    required: true,
   },
   timeStamp: {
     type: Date,
-    required: true,
+  },
+  done: {
+    type: Boolean,
+    default: false,
   },
 });
 
-export default models.PaymentModel || model<PaymentUser>("Payment", PaymentUser) as Model<PaymentUser>;
+export const PaymentUserModel: Model<PaymentUser> =
+  mongoose.models.PaymentUser || mongoose.model<PaymentUser>("Payment", PaymentUserSchema);
+

@@ -7,13 +7,31 @@ import { FaRegUserCircle } from "react-icons/fa";
 import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useSession } from "next-auth/react";
-import { initiate } from "@/actions/user-action";
+import axios from "axios";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+interface UserForm {
+  amount: number;
+  message: string;
+  email: string;
+}
+
 
 const PaymentPage = ({username}: {username:string}) => {
     const {data: session} = useSession();
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+  const [paymentForm, setPaymentForm] = useState<UserForm | null>({
+    amount: 0,
+    message: "",
+    email: "" ,
+  })
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement >) => {
+    const { name, value } = event.target;
+    setPaymentForm((prevForm) => (
+      prevForm === null ? { amount: 0, message: "", email: "" } : { ...prevForm, [name]: value }
+    ));
+  }; 
   const users = [
     { username: "johnDoe", id: 1, payment: 1000 },
     { username: "janeDoe", id: 2, payment: 2000 },
@@ -24,35 +42,21 @@ const PaymentPage = ({username}: {username:string}) => {
   const handlePayment = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const paymentform = {
-      name: 'John Doe', // For demo purposes, use actual data
-      to_username: 'recipient_username',
-      message: 'Thank you for your service!',
-    };
-
-    const amount = '50'; // Amount in USD (string to mimic form input)
-
-    try {
-      // Call your server action to initiate the payment
-     const response = await initiate({amount, paymentform} as {amount: string, paymentform: {name: string, to_username: string, message: string}})
-
-      const { clientSecret } = await response.json();
-
+    if (!paymentForm) {
+      return;
+      setPaymentStatus('An error occurred while processing the payment');
+     
+    }
+       try {
+      const response = await axios.post("/api/payment-user", {amount:paymentForm.amount,email: paymentForm.email, message:paymentForm.message});
+      const data = response.data;
+      
       // Ensure Stripe is loaded
       const stripe = await stripePromise;
 
-      if (!stripe || !clientSecret) {
-        throw new Error('Stripe or clientSecret not available');
-      }
 
-      // Proceed to confirm the payment using the clientSecret
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret);
-
-      if (error) {
-        setPaymentStatus(`Payment failed: ${error.message}`);
-      } else if (paymentIntent) {
-        setPaymentStatus(`Payment successful: ${paymentIntent.status}`);
-      }
+   
+     
     } catch (error) {
       setPaymentStatus('An error occurred while processing the payment');
       console.error(error);
@@ -108,9 +112,25 @@ const PaymentPage = ({username}: {username:string}) => {
       <h1 className="text-2xl uppercase font-bold py-4">Make a Payment</h1>
       <div className="flex flex-col gap-3">
         {/* create a three input filed first payment amount second username third email and then make a Button */}
-        <Input type="text" placeholder="Amount" className="p-3 rounded-md" />
-        <Input type="text" placeholder="Username" className="p-3 rounded-md" />
-        <Input type="text" placeholder="Email" className="p-3 rounded-md" />
+        <Input
+          id="amount"
+          onChange={handleChange}
+          value={paymentForm?.amount === null ? undefined : Number(paymentForm?.amount)}
+          type="text"
+          placeholder="Amount"
+          className="p-3 rounded-md"
+        />
+        <Input
+          onChange={handleChange}
+          value={paymentForm?.message === null ? undefined : paymentForm?.message}
+          type="text"
+          placeholder="Username"
+          className="p-3 rounded-md"
+        />
+        <Input
+        onChange={handleChange}
+        value={paymentForm?.email === null ? undefined : paymentForm?.email}
+        type="text" placeholder="Email" className="p-3 rounded-md" />
         <Button className="text-white bg-black hover:bg-slate-800 p-3 rounded-md shadow-xl font-bold" onClick={handlePayment}>Make a Payment</Button>
       </div>
       {/* choose for this amount create a button */}

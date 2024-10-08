@@ -3,6 +3,7 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface PaymentUser extends Document {
   name: string;
   to_username: string;
+  to_user_email: string;
   order_id: string;
   message: string;
   amount: number;
@@ -17,7 +18,10 @@ const PaymentUserSchema = new Schema<PaymentUser>({
   to_username: {
     type: String,
   },
-  order_id: { 
+  to_user_email: {
+    type: String,
+  },
+  order_id: {
     type: String,
   },
   message: {
@@ -35,6 +39,7 @@ const PaymentUserSchema = new Schema<PaymentUser>({
   },
 });
 
-export const PaymentUserModel: Model<PaymentUser> =
-  mongoose.models.PaymentUser || mongoose.model<PaymentUser>("Payment", PaymentUserSchema);
-
+const PaymentUser =
+  mongoose.models.PaymentUser ||
+  mongoose.model("PaymentUser", PaymentUserSchema);
+export default PaymentUser;

@@ -3,23 +3,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { FaRegUserCircle } from "react-icons/fa";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
+import { LoaderCircleIcon } from "lucide-react";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
-
-
 const PaymentPage = ({ username }: { username: string }) => {
   const { toast } = useToast();
 
   const { data: session } = useSession();
- 
+
   const userEmailforSession = session?.user?.email;
 
   const [paymentValue, setPaymentValue] = useState(0);
@@ -27,7 +26,8 @@ const PaymentPage = ({ username }: { username: string }) => {
   const [donorEmail, setDonorEmail] = useState("");
   const [message, setMessage] = useState("");
   const [donorName, setDonorName] = useState("");
-
+  const [paymentUser, setPaymentUser] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const users = [
     { username: "johnDoe", id: 1, payment: 1000 },
@@ -36,28 +36,47 @@ const PaymentPage = ({ username }: { username: string }) => {
     { username: "aliceJohnson", id: 4, payment: 4000 },
     { username: "mikeDavis", id: 5, payment: 5000 },
   ];
+
+  // fetch donor list
+  useEffect(() => {
+    const handleUserList = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.post("/api/pay-user-list", { username });
+        const data = response.data;
+        // console.log(data);
+        setPaymentUser(data.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    handleUserList();
+  }, []);
+  console.log(paymentUser);
+
   const handlePayment = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
       const response = await axios.post("/api/payment-user", {
         amount: paymentValue,
-        recipient_email: userEmail || session?.user?.email as string,
+        recipient_email: userEmail || (session?.user?.email as string),
         donor_email: donorEmail,
         donor_name: donorName,
         message,
       });
 
       const data = response.data;
-      if (data.url){
-        window.location.href = data.url
+      if (data.url) {
+        window.location.href = data.url;
         toast({
           title: "Success",
           description: "Payment page redirect",
-        })
-      }      
+        });
+      }
 
       // const stripe = await stripePromise;
-     
     } catch (error: any) {
       toast({
         title: "Error",
@@ -96,27 +115,34 @@ const PaymentPage = ({ username }: { username: string }) => {
         <div className=" flex gap-4 text-black w-[80%] mt-6 ">
           <div className="suppoter  w-1/2 p-10">
             <h1 className="text-2xl font-bold py-4 uppercase">Suppoters </h1>
-            <ul>
-              {users.map((items) => (
-                <div key={items.id}>
-                  <div
-                    key={items.id}
-                    className="flex items-center justify-between"
-                  >
-                    <div>
-                      <li
-                        className="py-4 flex gap-2 items-center"
-                        key={items.id}
-                      >
-                        <FaRegUserCircle className="w-6 h-6" /> {items.username}{" "}
-                      </li>
+            {isLoading ? (
+              <div className="h-80 w-full flex items-center justify-center">
+                <LoaderCircleIcon className="animate-spin flex items-center justify-center w-16 h-16 "/>
+              </div>
+            ) : (
+              <ul>
+                {paymentUser.map((items, index) => (
+                  <div key={index}>
+                    <div
+                      
+                      className="flex items-center justify-between"
+                    >
+                      <div>
+                        <li
+                          className="py-4 flex gap-2 items-center"
+                        
+                        >
+                          <FaRegUserCircle className="w-6 h-6" />{" "}
+                          {items?.message}
+                        </li>
+                      </div>
+                      <div>{items.amount}</div>
                     </div>
-                    <div>{items.payment}</div>
+                    <div className="border-b border-black"></div>
                   </div>
-                  <div className="border-b border-black"></div>
-                </div>
-              ))}
-            </ul>
+                ))}
+              </ul>
+            )}
           </div>
           <div className=" w-1/2 p-10">
             <h1 className="text-2xl uppercase font-bold py-4">
@@ -140,7 +166,7 @@ const PaymentPage = ({ username }: { username: string }) => {
               />
               <Input
                 onChange={(e) => setUserEmail(e.target.value)}
-                value={userEmail || userEmailforSession as string }
+                value={userEmail || (userEmailforSession as string)}
                 type="text"
                 placeholder="Enter Your recipient Email"
                 className="p-3 rounded-md"
@@ -191,7 +217,6 @@ const PaymentPage = ({ username }: { username: string }) => {
               >
                 30$
               </Button>
-             
             </div>
           </div>
         </div>

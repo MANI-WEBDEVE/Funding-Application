@@ -34,7 +34,7 @@ const page = ({ params }: { params: { token: string } }) => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-screen flex-col gap-4">
       <h1 className="text-3xl font-bold">Payment Success</h1>
       <Button onClick={handlePayment} className="mt-4 p-3">
         Click and Check Payment Success

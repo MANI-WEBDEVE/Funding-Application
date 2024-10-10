@@ -9,6 +9,7 @@ const page = ({ params }: { params: { token: string } }) => {
   const { toast } = useToast();
   const { data: session } = useSession();
     console.log(session)
+    console.log( `${process.env.NEXT_PUBLIC_URL}/${session?.user?.name}`)
   const handlePayment = async () => {
     try {
       const response = await axios.post("/api/success-pay", {

@@ -4,6 +4,8 @@ import React, { ChangeEvent, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
 interface User {
   name: string;
@@ -16,6 +18,7 @@ interface User {
 }
 
 const Dashboard = (): JSX.Element => {
+  const { data: session } = useSession();
   const [user, setUser] = useState<User>({
     name: "",
     email: "",
@@ -30,10 +33,26 @@ const Dashboard = (): JSX.Element => {
     const { name, value } = e.target;
     setUser((prevState) => ({ ...prevState, [name]: value }));
   };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const username: string = user.username;
+  const oldUserName = session?.user?.name;
+  const userEmail = session?.user?.email;
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(user);
+    try {
+      const response = await axios.post("/api/update-user-profile", {
+        newUsername: username,
+        oldUserName,
+        name: user.name,
+        email: userEmail,
+        publicPicture: user.publicPicture,
+        coverPicture: user.coverPicture,
+        stripeId: user.stripeId,
+        stripeSecret: user.stripeSecret,
+      });
+      console.log(response.data);
+    } catch (error: any) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -59,8 +78,8 @@ const Dashboard = (): JSX.Element => {
             className="mt-2 w-full"
             type="email"
             name="email"
-            value={user.email}
-            onChange={handleChange}
+            value={userEmail!}
+            disabled
           />
         </Label>
 
@@ -128,3 +147,6 @@ const Dashboard = (): JSX.Element => {
 };
 
 export default Dashboard;
+{
+  /*  */
+}

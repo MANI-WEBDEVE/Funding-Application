@@ -13,7 +13,7 @@ interface DataJason {
   amount: number;
   message: string;
 }
-const stripe = new Stripe(process.env.SECRET_STRIPE_KEY as string);
+// const stripe = new Stripe(process.env.SECRET_STRIPE_KEY as string);
 // const stripe = new Stripe(
 //   "sk_test_51Q6XbNJ7MdATZ6wnnlid1Fx4MOoqrgJcJuyz2CUaxc37Q34sNwSeilKzbsKt60EqCmJDzGYcRfahNzvo8NnvC46B00C80mSzTc"
 // );
@@ -31,21 +31,28 @@ export const POST = async (request: NextRequest) => {
         { status: 400 }
       );
     }
-    if (!emailRegex.test(data.donor_email) || !emailRegex.test(data.recipient_email)) {
-      return NextResponse.json({ message: 'Invalid email format.' }, { status: 400 });
+    if (
+      !emailRegex.test(data.donor_email) ||
+      !emailRegex.test(data.recipient_email)
+    ) {
+      return NextResponse.json(
+        { message: "Invalid email format." },
+        { status: 400 }
+      );
     }
     const currentUser = await User.findOne({
       email: data.recipient_email,
     });
+    const stripe = new Stripe(currentUser?.stripeId as string);
     // Find the user by email in the database
     // const currentUser = await User.findOne({ email: data.recipient_email });
     if (currentUser) {
-      const customer = await stripe.customers.create({
+      const customer = await stripe?.customers?.create({
         email: data.donor_email,
         name: data.donor_name,
       });
-     
-      const checkOutSession = await stripe.checkout.sessions.create({
+
+      const checkOutSession = await stripe?.checkout?.sessions.create({
         payment_method_types: ["card"],
         customer: customer.id,
         line_items: [
@@ -59,15 +66,13 @@ export const POST = async (request: NextRequest) => {
             },
             quantity: 1,
           },
-        
         ],
         mode: "payment",
         success_url: `${process.env.NEXT_PUBLIC_URL}/success-payment/${customer.id}`,
         cancel_url: "http://localhost:3000",
-        
-     });
-     console.log(checkOutSession.id)
-  
+      });
+      console.log(checkOutSession.id);
+
       const payment = new PaymentUser({
         order_id: customer.id,
         name: currentUser.username,

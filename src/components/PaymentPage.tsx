@@ -20,6 +20,8 @@ const PaymentPage = ({ username }: { username: string }) => {
   const { data: session, status } = useSession();
 
   const userEmailforSession = session?.user?.email;
+  console.log(userEmailforSession)
+  console.log(username)
   // const username = session?.user?.name;
   const [paymentValue, setPaymentValue] = useState(0);
   const [userEmail, setUserEmail] = useState<string>("");
@@ -64,8 +66,9 @@ const PaymentPage = ({ username }: { username: string }) => {
   useEffect(() => {
     try {
       const getDataUser = async () => {
-        const response = await axios.post("/api/get-user-data", {email:userEmailforSession, username});
+         const response = await axios.post("/api/get-user-data", { username});
        const data = response.data
+       
        setProfileImage(data.publicPicture)
        setCoverImage(data.coverPicture)
       }
@@ -115,12 +118,12 @@ const PaymentPage = ({ username }: { username: string }) => {
       <div className="cover w-full relative text-black">
         <img
           className="w-full h-[350px] object-cover"
-          src="https://camo.githubusercontent.com/5119ee303e5e49cdf23def653b737bede0da49a859a34714d62d9ab518afbbb2/68747470733a2f2f63646e2e6472696262626c652e636f6d2f75736572732f313136323037372f73637265656e73686f74732f333834383931342f70726f6772616d6d65722e676966"
+          src={coverImage}
           alt=""
         />
         <div className="absolute -bottom-[13%] right-[46%] border-[1px] border-black rounded-full">
           <img
-            src="/logo.png"
+            src={profileImage}
             className="rounded-full"
             alt="logo"
             width={100}

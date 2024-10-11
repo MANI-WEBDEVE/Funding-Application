@@ -7,8 +7,9 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
     await dbConnect();
     try {
         const data = await request.json()
-        const findUser = await User.findOne({ email: data.email, username:data.username });
-        console.log(findUser)
+        // console.log(data, "mani")
+        const findUser = await User.findOne({ username:data.username });
+        // console.log(findUser, "publicMani")
         return NextResponse.json(findUser)
     } catch (error) {
      

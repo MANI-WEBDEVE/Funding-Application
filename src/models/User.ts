@@ -38,11 +38,7 @@ const UserSchema = new Schema<UsersData>({
       required: false, // Optional, default to empty string if not available
       default: "",
     },
-    stripeSecret: {
-      type: String,
-      required: false, // Optional, default to empty string if not available
-      default: "",
-    },
+   
   });
   
 const User =

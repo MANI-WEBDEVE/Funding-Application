@@ -1,9 +1,10 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
-export interface PaymentUser extends Document {
+ interface PaymentUser extends Document {
   name: string;
   to_username: string;
   to_user_email: string;
+  to_recipient_email: string;
   order_id: string;
   message: string;
   amount: number;
@@ -19,6 +20,9 @@ const PaymentUserSchema = new Schema<PaymentUser>({
     type: String,
   },
   to_user_email: {
+    type: String,
+  },
+  to_recipient_email: {
     type: String,
   },
   order_id: {

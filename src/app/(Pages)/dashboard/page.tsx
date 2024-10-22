@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
-
+import { useRouter } from "next/navigation";
 interface User {
   name: string;
   email: string;
@@ -17,6 +17,7 @@ interface User {
 }
 
 const Dashboard = (): JSX.Element => {
+  const router = useRouter();
   const {toast} = useToast()
   const { data: session } = useSession();
   const [user, setUser] = useState<User>({
@@ -63,6 +64,10 @@ const Dashboard = (): JSX.Element => {
         title: data.title,
         description: data.message
       })
+
+      if (data.title === "Success") {
+        router.push(`/${username}`)
+      }
      
     } catch (error: any) {
       toast({

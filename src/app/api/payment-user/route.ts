@@ -78,6 +78,7 @@ export const POST = async (request: NextRequest) => {
         name: currentUser.username,
         to_username: data.donor_name,
         to_user_email: data.donor_email,
+        to_recipient_email: data.recipient_email,
         message: data.message,
         amount: data.amount,
         payment_id: checkOutSession.id,

@@ -10,11 +10,12 @@ export const POST = async (request: NextRequest) => {
   await dbConnect();
   try {
     const data: DataUser = await request.json();
-    console.log(data.username);
-    const userList = await PaymentUser.find({ name: data.username, done: true })
+    console.log(data.username, "jhasdhjksadh");
+    const userList = await PaymentUser.find({ 
+      to_recipient_email: data.username, done: true })
       .sort({ amount: -1 })
       .lean();
-
+    console.log(userList)
     if (userList) {
       return NextResponse.json({ success: true, data: userList });
     } else {

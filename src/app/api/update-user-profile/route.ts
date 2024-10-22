@@ -6,7 +6,14 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
   await dbConnect();
   try {
     const dataUser = await request.json();
-    console.log(dataUser);
+    const { name, email, publicPicture, coverPicture, stripeId } = dataUser
+    if (!name || !email || !publicPicture || !coverPicture || !stripeId) {
+      return NextResponse.json({
+        message: "Missing required fields and all filed must be required",
+        title:"Error Missing Filed",
+        status: 400,
+      })
+    }
     const findUser = await User.findOne({
       username: dataUser.oldUserName,
       email: dataUser.email,
@@ -36,6 +43,7 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
         success: true,
         data: updateUser,
         message: "User updated successfully",
+        title: "Success",
       });
     }
   } catch (error) {

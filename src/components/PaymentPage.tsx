@@ -205,6 +205,7 @@ const PaymentPage = ({ username }: { username: string }) => {
                 onChange={(e) => setUserEmail(e.target.value)}
                 value={userEmail || (userEmailforSession as string)}
                 type="text"
+                disabled={userEmailforSession ? true : false}
                 placeholder="Enter Your recipient Email"
                 className="p-3 rounded-md"
               />

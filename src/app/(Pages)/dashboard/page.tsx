@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/hooks/use-toast";
 
 interface User {
   name: string;
@@ -16,6 +17,7 @@ interface User {
 }
 
 const Dashboard = (): JSX.Element => {
+  const {toast} = useToast()
   const { data: session } = useSession();
   const [user, setUser] = useState<User>({
     name: "",
@@ -55,9 +57,18 @@ const Dashboard = (): JSX.Element => {
         coverPicture: user.coverPicture,
         stripeId: user.stripeId,
       });
-      console.log(response.data);
+      const data = response.data;
+
+      toast({
+        title: data.title,
+        description: data.message
+      })
+     
     } catch (error: any) {
-      console.log(error.message);
+      toast({
+        title: "Error",
+        description: error.response.data.message
+      })
     }
   };
 
@@ -69,12 +80,12 @@ const Dashboard = (): JSX.Element => {
         });
         const data = response.data;
         setUserInfo({
-          name: data?.name || "",
-          username: data?.username || "",
-          publicPicture: data?.publicPicture || "",
-          coverPicture: data?.coverPicture || "",
-          stripeId: data?.stripeId || "",
-          email: data?.email || "", // Include email in case you want to use it elsewhere
+          name: data?.name,
+          username: data?.username,
+          publicPicture: data?.publicPicture,
+          coverPicture: data?.coverPicture,
+          stripeId: data?.stripeId,
+          email: data?.email, // Include email in case you want to use it elsewhere
         });
       } catch (error) {
         console.log(error);
@@ -98,7 +109,7 @@ const Dashboard = (): JSX.Element => {
             className="mt-2 w-full"
             type="text"
             name="name"
-            value={user.name || userInfo.name} // Updated: If user.name is not set, use userInfo.name
+            value={user.name} // Updated: If user.name is not set, use userInfo.name
             onChange={handleChange}
           />
         </Label>
@@ -120,7 +131,9 @@ const Dashboard = (): JSX.Element => {
             className="mt-2 w-full"
             type="text"
             name="username"
-            value={user.username || userInfo.username} // Updated: Default to userInfo.username
+            value={user.username } 
+           
+            // Updated: Default to userInfo.username
             onChange={handleChange}
           />
         </Label>
@@ -131,7 +144,8 @@ const Dashboard = (): JSX.Element => {
             className="mt-2 w-full"
             type="text"
             name="publicPicture"
-            value={user.publicPicture || userInfo.publicPicture} // Updated: Default to userInfo.publicPicture
+         
+            value={user.publicPicture } // Updated: Default to userInfo.publicPicture
             onChange={handleChange}
           />
         </Label>
@@ -142,7 +156,8 @@ const Dashboard = (): JSX.Element => {
             className="mt-2 w-full"
             type="text"
             name="coverPicture"
-            value={user.coverPicture || userInfo.coverPicture} // Updated: Default to userInfo.coverPicture
+           
+            value={user.coverPicture } // Updated: Default to userInfo.coverPicture
             onChange={handleChange}
           />
         </Label>
@@ -153,7 +168,8 @@ const Dashboard = (): JSX.Element => {
             className="mt-2 w-full"
             type="text"
             name="stripeId"
-            value={user.stripeId || userInfo.stripeId} // Updated: Default to userInfo.stripeId
+        
+            value={user.stripeId} // Updated: Default to userInfo.stripeId
             onChange={handleChange}
           />
         </Label>

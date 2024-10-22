@@ -50,7 +50,7 @@ const PaymentPage = ({ username }: { username: string }) => {
     const handleUserList = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.post("/api/pay-user-list", { username });
+        const response = await axios.post("/api/pay-user-list", { username: userEmailforSession });
         const data = response.data;
        
         setPaymentUser(data.data);
@@ -61,7 +61,20 @@ const PaymentPage = ({ username }: { username: string }) => {
       }
     };
     handleUserList();
-  }, []);
+  }, [session?.user?.email]);
+  const handleUserList = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post("/api/pay-user-list", { username: userEmailforSession });
+      const data = response.data;
+     
+      setPaymentUser(data.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -140,6 +153,7 @@ const PaymentPage = ({ username }: { username: string }) => {
           9000 members . 200 posts . $15,430/release
         </div>
         <div className=" flex gap-4 text-black w-[80%] mt-6 ">
+          <Button onClick={handleUserList}> Click</Button>
           <div className="suppoter  w-1/2 p-10">
             <h1 className="text-2xl font-bold py-4 uppercase">Suppoters </h1>
             {isLoading ? (
